@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr
 
+from app.schemas.user import UserResponse
 from app.database import get_db
 from app.models.user import User
 from app.core.security import hash_password, verify_password, create_access_token
@@ -16,18 +17,22 @@ class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
-@router.post("/register")
+@router.post("/register", response_model=UserResponse)
 def register(user: UserCreate, db: Session = Depends(get_db)):
     existing_user = db.query(User).filter(User.email == user.email).first()
     if existing_user:
-        raise HTTPException(status_code=400, detail="User already exists")
+        raise HTTPException(status_code=400, detail="Email already registered")
 
-    hashed_pw = hash_password(user.password)
-    db_user = User(email=user.email, hashed_password=hashed_pw)
+    db_user = User(
+        email=user.email,
+        hashed_password=hash_password(user.password),
+        role="buyer"
+    )
+
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return {"id": db_user.id, "email": db_user.email, "is_active": db_user.is_active, "role": db_user.role}
+    return db_user
 
 @router.post("/login")
 def login(user_in: UserLogin, db: Session = Depends(get_db)):

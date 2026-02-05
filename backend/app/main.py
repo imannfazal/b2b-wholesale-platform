@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from app.database import engine, Base
 
 # Import models (only needed for metadata creation)
-from app.models import user as user_model, role as role_model, product as product_model
+from app.models import user as user_model, product as product_model
 
 # Import routers
 from app.routers import auth, user, product
