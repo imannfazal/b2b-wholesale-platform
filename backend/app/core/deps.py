@@ -42,6 +42,8 @@ def require_role(role_name: str):
                 detail="Not enough permissions",
             )
         return user
+
     return role_checker
+
 
 

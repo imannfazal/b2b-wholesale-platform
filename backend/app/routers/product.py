@@ -9,12 +9,12 @@ from app.core.deps import require_role
 router = APIRouter(prefix="/products", tags=["Products"])
 
 
-@router.post("/", response_model=ProductResponse)
-def create_product(
-    product: ProductCreate,
-    db: Session = Depends(get_db),
-    user=Depends(require_role("admin"))
-):
+@router.post(
+    "/",
+    response_model=ProductResponse,
+    dependencies=[Depends(require_role("admin"))]
+)
+def create_product(product: ProductCreate, db: Session = Depends(get_db)):
     db_product = Product(**product.dict())
     db.add(db_product)
     db.commit()
