@@ -6,7 +6,7 @@ from app.database import engine, Base
 from app.models import user as user_model, product as product_model
 
 # Import routers
-from app.routers import auth, user, product
+from app.routers import auth, user, product, order
 
 app = FastAPI(title="B2B Wholesale API")
 
@@ -17,6 +17,7 @@ Base.metadata.create_all(bind=engine)
 app.include_router(auth.router)
 app.include_router(user.router)   # Users router
 app.include_router(product.router) # Products router
+app.include_router(order.router) # Orders router
 
 # Health check endpoint
 @app.get("/")
